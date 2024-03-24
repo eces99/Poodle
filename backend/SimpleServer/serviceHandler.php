@@ -4,8 +4,15 @@ include("businesslogic/simpleLogic.php");
 $param = "";
 $method = "";
 
-isset($_GET["method"]) ? $method = $_GET["method"] : false;
-isset($_GET["param"]) ? $param = $_GET["param"] : false;
+// Prüfen, ob es sich um eine POST-Anfrage handelt
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    isset($_POST["method"]) ? $method = $_POST["method"] : false;
+    isset($_POST["param"]) ? $param = $_POST["param"] : false;
+} elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    // Ihre vorhandene Logik für GET-Anfragen
+    isset($_GET["method"]) ? $method = $_GET["method"] : false;
+    isset($_GET["param"]) ? $param = $_GET["param"] : false;
+}
 
 $logic = new SimpleLogic();
 $result = $logic->handleRequest($method, $param);

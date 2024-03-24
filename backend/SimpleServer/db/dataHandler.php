@@ -1,5 +1,5 @@
 <?php
-include("./models/person.php");
+include("./models/appointment.php");
 class DataHandler
 {
     public function queryAppointments()
@@ -39,6 +39,39 @@ class DataHandler
             }
         }
         return $result;
+    }
+
+    public function addAppointment($appointment)
+    {
+        $conn = $this->getDBConnection();
+        $sql = "INSERT INTO appointments (title, place, info, beginTime, duration) VALUES (?, ?, ?, ?, ?)";
+        $stmt = $conn->prepare($sql);
+        
+        // Binden der Parameter. 's' steht für string, 'i' für integer
+        $stmt->bind_param("ssssi", $appointment->title, $appointment->place, $appointment->info, $appointment->beginTime, $appointment->duration);
+        
+        if ($stmt->execute()) {
+            echo "New record created successfully";
+        } else {
+            echo "Error: " . $stmt->error;
+        }
+        $stmt->close();
+        $conn->close();
+    }
+    
+
+
+    public function getDBConnection()
+    {
+        $servername = "localhost";
+        $username = "root";
+        $password = "";
+        $dbname = "poodle_db";
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+        return $conn;
     }
 
     private static function getDemoData()
