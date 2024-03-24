@@ -1,19 +1,18 @@
 <?php
-class Person {
+class Appointment {
     public $id;
-    public $firstname;
-    public $lastname;
-    public $email;
-    public $phone;
-    public $department;
+    public $title;
+    public $place;
+    public $info;
+    public $beginTime;
+    public $duration;
 
-    function __construct($id, $fn, $ln, $mail, $phone, $dept) {
+    function __construct($id, $title, $place, $info, $beginTime,  $duration) {
         $this->id = $id;
-        $this->firstname = $fn;
-        $this->lastname=$ln;
-        $this->email=$mail;
-        $this->phone=$phone;
-        $this->department=$dept;
-
+        $this->title = $title;
+        $this->place=$place;
+        $this->info=$info;
+        $this->beginTime=$beginTime;
+        $this->duration=$duration;
       }
 }

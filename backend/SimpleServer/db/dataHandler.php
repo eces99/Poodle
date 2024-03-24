@@ -2,16 +2,16 @@
 include("./models/person.php");
 class DataHandler
 {
-    public function queryPersons()
+    public function queryAppointments()
     {
         $res =  $this->getDemoData();
         return $res;
     }
 
-    public function queryPersonById($id)
+    public function queryAppointmentById($id)
     {
         $result = array();
-        foreach ($this->queryPersons() as $val) {
+        foreach ($this->queryAppointments() as $val) {
             if ($val[0]->id == $id) {
                 array_push($result, $val);
             }
@@ -19,11 +19,22 @@ class DataHandler
         return $result;
     }
 
-    public function queryPersonByName($name)
+    public function queryAppointmentByName($name)
     {
         $result = array();
-        foreach ($this->queryPersons() as $val) {
-            if ($val[0]->lastname == $name) {
+        foreach ($this->queryAppointments() as $val) {
+            if ($val[0]->title == $name) {
+                array_push($result, $val);
+            }
+        }
+        return $result;
+    }
+    
+    public function queryAppointmentByTime($time)
+    {
+        $result = array();
+        foreach ($this->queryAppointments() as $val) {
+            if ($val[0]->beginTime == $time) {
                 array_push($result, $val);
             }
         }
@@ -33,10 +44,10 @@ class DataHandler
     private static function getDemoData()
     {
         $demodata = [
-            [new Person(1, "Jane", "Doe", "jane.doe@fhtw.at", 1234567, "Central IT")],
-            [new Person(2, "John", "Doe", "john.doe@fhtw.at", 34345654, "Help Desk")],
-            [new Person(3, "baby", "Doe", "baby.doe@fhtw.at", 54545455, "Management")],
-            [new Person(4, "Mike", "Smith", "mike.smith@fhtw.at", 343477778, "Faculty")],
+            [new Appointment(1, "Meeting", "Room 1", "Discuss the project", "2021-06-01 09:00:00", 1)],
+            [new Appointment(2, "Lunch", "Canteen", "Lunch with colleagues", "2021-06-01 12:00:00", 1)],
+            [new Appointment(3, "Meeting", "Room 2", "Discuss the project", "2021-06-02 09:00:00", 1)],
+            [new Appointment(4, "Lunch", "Canteen", "Lunch with colleagues", "2021-06-02 12:00:00", 1)],
         ];
         return $demodata;
     }
