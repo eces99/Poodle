@@ -44,11 +44,10 @@ class DataHandler
     public function addAppointment($appointment)
     {
         $conn = $this->getDBConnection();
-        $sql = "INSERT INTO appointments (title, place, info, beginTime, duration) VALUES (?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO appointment (title, place, info, beginTime, duration) VALUES (?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
-        
-        // Binden der Parameter. 's' steht für string, 'i' für integer
-        $stmt->bind_param("ssssi", $appointment->title, $appointment->place, $appointment->info, $appointment->beginTime, $appointment->duration);
+
+        $stmt->bind_param("ssssi", $appointment['title'], $appointment['place'], $appointment['info'], $appointment['beginTime'], $appointment['duration']);
         
         if ($stmt->execute()) {
             echo "New record created successfully";

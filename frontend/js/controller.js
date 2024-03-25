@@ -28,20 +28,25 @@ function loaddata(searchterm) {
 $(document).ready(function() {
     $("#appointmentForm").submit(function(e) {
         e.preventDefault();
-        submitdata($("#appointmentForm").serialize());
+        submitdata(this);
     });
 });
 
-function submitdata(data) {
-    console.log(data);
+function submitdata(form) {
+    var data = $(form).serializeArray().reduce(function(obj, item) {
+        obj[item.name] = item.value;
+        return obj;
+    }, {});
+
     $.ajax({
         type: "POST",
         url: "http://localhost/Poodle/backend/SimpleServer/serviceHandler.php",
         cache: false,
-        data: {method: "addAppointment", param: data},
-        dataType: "json",
+        data: {method: "addAppointment", param: JSON.stringify(data)},
+        contentType: "application/x-www-form-urlencoded; charset=UTF-8",
         success: function(response) {
-            alert(response);
+            alert(JSON.stringify(response));
         }
     });
 }
+
