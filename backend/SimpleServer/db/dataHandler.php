@@ -1,5 +1,6 @@
 <?php
 include("./models/appointment.php");
+
 class DataHandler
 {
     public function queryAppointments()
@@ -41,25 +42,49 @@ class DataHandler
         return $result;
     }
 
+
+// Funktion zum Inkrementieren des Auto-Increment-WFerts
+
     public function addAppointment($appointment)
     {
-        $conn = $this->getDBConnection();
-        $sql = "INSERT INTO appointment (title, place, info, beginTime, duration) VALUES (?, ?, ?, ?, ?)";
-        $stmt = $conn->prepare($sql);
-
-        $stmt->bind_param("ssssi", $appointment['title'], $appointment['place'], $appointment['info'], $appointment['beginTime'], $appointment['duration']);
         
-        if ($stmt->execute()) {
+        $conn = $this->getDBConnection();
+        $conn->autocommit(FALSE); // Start transaction
+
+    
+        try {
+            // Insert into appointment without beginTime
+            $sql = "INSERT INTO appointment (title, place, info, duration) VALUES (?, ?, ?, ?)";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("sssi", $appointment['title'], $appointment['place'], $appointment['info'], $appointment['duration']);
+            $stmt->execute();
+            $appointmentId = $stmt->insert_id; // Get the last inserted ID
+
+    
+            // Handle beginTime
+            if (isset($appointment['beginTime']) && is_array($appointment['beginTime'])) {
+                $sql = "INSERT INTO terminslots (beginTime, appointment_id) VALUES (?, ?)";
+                $stmt = $conn->prepare($sql);
+                foreach ($appointment['beginTime'] as $beginTime) {
+                    $stmt->bind_param("si", $beginTime, $appointmentId);
+                    $stmt->execute();
+                }
+            }
+    
+            $conn->commit(); // Commit transaction
             echo "New record created successfully";
-        } else {
-            echo "Error: " . $stmt->error;
+        } catch (Exception $e) {
+            $conn->rollback(); // Rollback transaction on error
+            echo "Error: " . $e->getMessage();
+        } finally {
+            $stmt->close();
+            $conn->close();
         }
-        $stmt->close();
-        $conn->close();
+
+        return $appointmentId;
     }
     
-
-
+    
     public function getDBConnection()
     {
         $servername = "localhost";

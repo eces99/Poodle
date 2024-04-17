@@ -1,52 +1,73 @@
-//Starting point for JQuery init
-/*$(document).ready(function () {
-    $("#searchResult").hide();
-    $("#btn_Search").click(function (e) {
-       loaddata($("#seachfield").val());
-    });
-
-});
-
-function loaddata(searchterm) {
-
-    $.ajax({
-        type: "GET",
-        url: "../serviceHandler.php",
-        cache: false,
-        data: {method: "queryPersonByName", param: searchterm},
-        dataType: "json",
-        success: function (response) {
-            
-            $("#noOfentries").val(response.length);
-            $("#searchResult").show(1000).delay(1000).hide(1000);
-        }
-        
-    });
-}*/
+console.log("controller.js");
 
 //Starting point for JQuery init
-$(document).ready(function() {
-    $("#appointmentForm").submit(function(e) {
-        e.preventDefault();
-        submitdata(this);
-    });
+$(document).ready(function () {
+  console.log("ready!");
+  handleForm();
+  $("#appointmentForm").submit(function (e) {
+    e.preventDefault();
+    submitdata(this);
+  });
 });
+
+let beginTimes = [];
+
+function handleForm() {
+  console.log("handleForm1");
+  let beginTimeList = document.getElementById("beginTimesList"); // Fixed the variable name
+  document.getElementById("btn_add").addEventListener("click", function () {
+    console.log("handleForm2");
+    let beginTime = document.getElementById("beginTime").value;
+    if (beginTime) {
+      beginTimes.push(beginTime);
+      document.getElementById("beginTime").value = ""; // Clear the input field
+      beginTimeList.innerHTML += "<li>" + beginTime + "</li>"; // Correctly append new list item
+    }
+    console.log(beginTimes);
+  });
+
+  document.getElementById("btn_add").addEventListener("click", function () {
+    let beginTime = document.getElementById("beginTime").value;
+    if (beginTime) {
+      beginTimes.push(beginTime);
+      document.getElementById("beginTime").value = ""; // Clear the input field
+      beginTimeList.innerHTML += "<li>" + beginTime + "</li>"; // Correctly append new list item
+    }
+    console.log(beginTimes);
+  });
+}
 
 function submitdata(form) {
-    var data = $(form).serializeArray().reduce(function(obj, item) {
-        obj[item.name] = item.value;
-        return obj;
-    }, {});
+  // Serialisiere das Formular zu einem Objekt
+  var formData = $(form).serializeArray().reduce(function (obj, item) {
+    obj[item.name] = item.value;
+    return obj;
+  }, {});
 
-    $.ajax({
-        type: "POST",
-        url: "http://localhost/Poodle/backend/SimpleServer/serviceHandler.php",
-        cache: false,
-        data: {method: "addAppointment", param: JSON.stringify(data)},
-        contentType: "application/x-www-form-urlencoded; charset=UTF-8",
-        success: function(response) {
-            alert(JSON.stringify(response));
-        }
-    });
+  // Füge das `beginTimes` Array zum Datenobjekt hinzu
+  formData.beginTime = beginTimes;
+
+  // Daten für den AJAX-Aufruf vorbereiten
+  var dataToSend = {
+    method: "addAppointment",
+    param: JSON.stringify(formData)
+  };
+
+  // AJAX-Aufruf ausführen
+  $.ajax({
+    type: "POST",
+    url: "http://localhost/Poodle/backend/SimpleServer/serviceHandler.php",
+    cache: false,
+    data: dataToSend,
+    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+    success: function (response) {
+      alert(JSON.stringify(response));
+    },
+    error: function (xhr, status, error) {
+      console.error("Error: " + error);
+      console.error("Status: " + status);
+      console.error(xhr);
+    }
+  });
 }
 
