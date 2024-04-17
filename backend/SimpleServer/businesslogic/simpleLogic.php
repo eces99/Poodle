@@ -27,6 +27,9 @@ class SimpleLogic
             case "queryAppointmentsByTime":
                 $res = $this->dh->queryAppointmentByTime($param);
                 break;
+            case "getAppointments": // New case to fetch appointments
+                $res = $this->dh->getAppointments();
+                break;
             default:
                 $res = null;
                 break;

@@ -73,6 +73,46 @@ class DataHandler
         return $conn;
     }
 
+    public function getAppointments()
+{
+    // Establish database connection
+    $conn = $this->getDBConnection();
+    
+    // Query to fetch appointments
+    $sql = "SELECT * FROM appointment";
+    $result = $conn->query($sql);
+    
+    // Check if there are rows returned
+    if ($result->num_rows > 0) {
+        // Array to store appointments
+        $appointments = array();
+        
+        // Fetching data and adding to appointments array
+        while ($row = $result->fetch_assoc()) {
+            $appointments[] = array(
+                'id' => $row['id'],
+                'title' => $row['title'],
+                'place' => $row['place'],
+                'info' => $row['info'],
+                'beginTime' => $row['beginTime'],
+                'duration' => $row['duration']
+            );
+        }
+        
+        // Close result set
+        $result->close();
+    } else {
+        // No appointments found
+        $appointments = array();
+    }
+    
+    // Close database connection
+    $conn->close();
+    
+    return $appointments;
+}
+
+
     private static function getDemoData()
     {
         $demodata = [
