@@ -1,4 +1,9 @@
 console.log("controller.js");
+/*"use strict";
+var view = "Home";
+var homePage = $("#homePage");
+var createAppointmentPage = $("#createAppointmentPage");
+*/
 
 //Starting point for JQuery init
 $(document).ready(function () {
