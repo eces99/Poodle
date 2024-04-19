@@ -1,13 +1,30 @@
 console.log("controller.js");
-/*"use strict";
-var view = "Home";
-var homePage = $("#homePage");
-var createAppointmentPage = $("#createAppointmentPage");
-*/
 
 //Starting point for JQuery init
 $(document).ready(function () {
   console.log("ready!");
+  var homePage = $("#home-page");
+    var createPage = $("#create-page");
+
+    $(".home-link").on("click", function () {
+        changeView("home");
+    });
+    $(".create-link").on("click", function () {
+        changeView("create");
+    });
+
+    function changeView(newView) {
+        if (newView === "home") {
+            homePage.show();
+            createPage.hide();
+        } else if (newView === "create") {
+            createPage.show();
+            homePage.hide();
+        }
+    }
+
+    // Initialize with the home view visible
+    changeView("home");
   handleForm();
   $("#appointmentForm").submit(function (e) {
     e.preventDefault();
