@@ -4,27 +4,27 @@ console.log("controller.js");
 $(document).ready(function () {
   console.log("ready!");
   var homePage = $("#home-page");
-    var createPage = $("#create-page");
+  var createPage = $("#create-page");
 
-    $(".home-link").on("click", function () {
-        changeView("home");
-    });
-    $(".create-link").on("click", function () {
-        changeView("create");
-    });
-
-    function changeView(newView) {
-        if (newView === "home") {
-            homePage.show();
-            createPage.hide();
-        } else if (newView === "create") {
-            createPage.show();
-            homePage.hide();
-        }
-    }
-
-    // Initialize with the home view visible
+  $(".home-link").on("click", function () {
     changeView("home");
+  });
+  $(".create-link").on("click", function () {
+    changeView("create");
+  });
+
+  function changeView(newView) {
+    if (newView === "home") {
+      homePage.show();
+      createPage.hide();
+    } else if (newView === "create") {
+      createPage.show();
+      homePage.hide();
+    }
+  }
+
+  // Initialize with the home view visible
+  changeView("home");
   handleForm();
   $("#appointmentForm").submit(function (e) {
     e.preventDefault();
@@ -61,10 +61,12 @@ function handleForm() {
 
 function submitdata(form) {
   // Serialisiere das Formular zu einem Objekt
-  var formData = $(form).serializeArray().reduce(function (obj, item) {
-    obj[item.name] = item.value;
-    return obj;
-  }, {});
+  var formData = $(form)
+    .serializeArray()
+    .reduce(function (obj, item) {
+      obj[item.name] = item.value;
+      return obj;
+    }, {});
 
   // Füge das `beginTimes` Array zum Datenobjekt hinzu
   formData.beginTime = beginTimes;
@@ -72,7 +74,7 @@ function submitdata(form) {
   // Daten für den AJAX-Aufruf vorbereiten
   var dataToSend = {
     method: "addAppointment",
-    param: JSON.stringify(formData)
+    param: JSON.stringify(formData),
   };
 
   // AJAX-Aufruf ausführen
@@ -89,7 +91,6 @@ function submitdata(form) {
       console.error("Error: " + error);
       console.error("Status: " + status);
       console.error(xhr);
-    }
+    },
   });
 }
-
