@@ -13,7 +13,7 @@ class SimpleLogic
     {
         switch ($method) {
             case "addAppointment":
-                $this->dh->addAppointment($param);
+                $res= $this->dh->addAppointment($param);
                 break;
             case "queryAppointments":
                 $res = $this->dh->queryAppointments();
@@ -27,7 +27,7 @@ class SimpleLogic
             case "queryAppointmentsByTime":
                 $res = $this->dh->queryAppointmentByTime($param);
                 break;
-            case "getAppointments": // New case to fetch appointments
+            case "getAppointments":
                 $res = $this->dh->getAppointments();
                 break;
             default:

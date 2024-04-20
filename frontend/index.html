@@ -14,9 +14,27 @@
 </head>
 
 <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">Poodle</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item home-link" style="cursor: pointer">
+                    <span class="nav-link">Home </span>
+                </li>
+                <li class="nav-item create-link" style="cursor: pointer">
+                    <span class="nav-link">Create </span>
+            </ul>
+        </div>
+    </nav>
+    <!--/.Navbar-->
     <div id="container">
         <!-- Appointment Planner Form -->
-        <div class="row mt-5">
+        <div class="row mt-5" id="create-page">
             <div class="col-md-6 offset-md-3">
                 <h2 class="text-center mb-4">Appointment Planner</h2>
                 <div id="appointmentList">List</div>
@@ -38,6 +56,8 @@
                         <label for="beginTime">Begin Time</label>
                         <input type="datetime-local" class="form-control" id="beginTime" name="beginTime">
                     </div>
+                    <button type="button" id="btn_add" class="btn btn-primary btn-block">Add</button>
+                    <ul id="beginTimesList"></ul>
                     <div class="form-group">
                         <label for="duration">Duration (in minutes)</label>
                         <input type="number" class="form-control" id="duration" name="duration"
@@ -48,7 +68,19 @@
                 </form>
             </div>
         </div>
+    </div>
 
+    <div id="container">
+        <div class="row mt-5" id="home-page">
+            <div class="col-md-6 offset-md-3">
+                <h2 class="text-center mb-4">Appointments</h2>
+                <div class="row">
+                    <div class="col-md-6 offset-md-3">
+                        <ul id="appointmentsList"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 

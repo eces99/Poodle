@@ -1,83 +1,122 @@
-//Starting point for JQuery init
-/*$(document).ready(function () {
-    $("#searchResult").hide();
-    $("#btn_Search").click(function (e) {
-       loaddata($("#seachfield").val());
-    });
+$(document).ready(function () {
+  console.log("ready!");
+  var homePage = $("#home-page");
+  var createPage = $("#create-page");
 
+  $(".home-link").on("click", function () {
+    changeView("home");
+  });
+  $(".create-link").on("click", function () {
+    changeView("create");
+  });
+
+  function changeView(newView) {
+    if (newView === "home") {
+      homePage.show();
+      createPage.hide();
+      getAppointments();  // Rufe Termine ab, wenn die Home-Ansicht aktiviert wird
+    } else if (newView === "create") {
+      createPage.show();
+      homePage.hide();
+    }
+  }
+
+  // Initialisiere die Home-Ansicht und lade die Termine
+  changeView("home");
+  handleForm();
+  $("#appointmentForm").submit(function (e) {
+    e.preventDefault();
+    submitdata(this);
+  });
 });
 
-function loaddata(searchterm) {
+let beginTimes = [];
 
-    $.ajax({
-        type: "GET",
-        url: "../serviceHandler.php",
-        cache: false,
-        data: {method: "queryPersonByName", param: searchterm},
-        dataType: "json",
-        success: function (response) {
-            
-            $("#noOfentries").val(response.length);
-            $("#searchResult").show(1000).delay(1000).hide(1000);
-        }
-        
-    });
-}*/
-
-//Starting point for JQuery init
-$(document).ready(function() {
-    $("#appointmentForm").submit(function(e) {
-        e.preventDefault();
-        submitdata(this);
-    });
-});
+function handleForm() {
+  console.log("handleForm1");
+  let beginTimeList = document.getElementById("beginTimesList");
+  document.getElementById("btn_add").addEventListener("click", function () {
+    console.log("handleForm2");
+    let beginTime = document.getElementById("beginTime").value;
+    if (beginTime) {
+      beginTimes.push(beginTime);
+      document.getElementById("beginTime").value = ""; // Clear the input field
+      beginTimeList.innerHTML += "<li>" + beginTime + "</li>"; // Correctly append new list item
+    }
+    console.log(beginTimes);
+  });
+}
 
 function submitdata(form) {
-    var data = $(form).serializeArray().reduce(function(obj, item) {
-        obj[item.name] = item.value;
-        return obj;
+  // Serialisiere das Formular zu einem Objekt
+  var formData = $(form)
+    .serializeArray()
+    .reduce(function (obj, item) {
+      obj[item.name] = item.value;
+      return obj;
     }, {});
 
-    $.ajax({
-        type: "POST",
-        url: "http://localhost:8080/Poodle/backend/SimpleServer/serviceHandler.php",
-        cache: false,
-        data: {method: "addAppointment", param: JSON.stringify(data)},
-        contentType: "application/x-www-form-urlencoded; charset=UTF-8",
-        success: function(response) {
-            alert(JSON.stringify(response));
-        }
-    });
-}
-        // Function to fetch and display appointments
-        function fetchAppointments() {
-            $.ajax({
-                type: "GET",
-                url: "http://localhost:8080/Poodle/backend/SimpleServer/serviceHandler.php",
-                data: { method: "queryAppointments" },
-                dataType: "json",
-                success: function(response) {
-                    displayAppointments(response);
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error fetching appointments:', error);
-                }
-            });
-        }
-    
-        // Function to display appointments in a table
-        function displayAppointments(appointments) {
-            var table = "<table><tr><th>Appointment ID</th><th>Title</th><th>Place</th><th>Info</th><th>Begin Time</th><th>Duration</th></tr>";
-            appointments.forEach(function(appointment) {
-                    appointment.forEach(function(appt) {
-                table += "<tr><td>" + appt.id + "</td><td>" + appt.title + "</td><td>" + appt.place + "</td><td>" + appt.info + "</td><td>" + appt.beginTime + "</td><td>" + appt.duration + "</td></tr>";
-                    });
-            });
-            table += "</table>";
-            $("#appointmentList").html(table);
-        }
-    
-        // Fetch appointments when the page loads
-        fetchAppointments();
+  // Füge das `beginTimes` Array zum Datenobjekt hinzu
+  formData.beginTime = beginTimes;
 
-    
+  // Daten für den AJAX-Aufruf vorbereiten
+  var dataToSend = {
+    method: "addAppointment",
+    param: JSON.stringify(formData),
+  };
+
+  // AJAX-Aufruf ausführen zum Hinzufügen eines Termins
+  $.ajax({
+    type: "POST",
+    url: "http://localhost/Poodle/backend/SimpleServer/serviceHandler.php",
+    cache: false,
+    data: dataToSend,
+    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+    success: function (response) {
+      alert(JSON.stringify(response));
+    },
+    error: function (xhr, status, error) {
+      console.error("Error: " + error);
+      console.error("Status: " + status);
+      console.error(xhr);
+    },
+  });
+}
+
+function getAppointments() {
+    $.ajax({
+      type: "GET",
+      url: "http://localhost/Poodle/backend/SimpleServer/serviceHandler.php",
+      cache: true, // Setze cache auf true
+      data: { method: "getAppointments" },
+      contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+      success: function (response) {
+        console.log("Here I am: ");
+        try {
+          var data = JSON.parse(response);
+          displayData(data);
+        } catch (e) {
+          console.error("Parsing error:", e);
+        }
+      },
+      error: function (xhr, status, error) {
+        console.log("No, here I am: ");
+        console.error("Error: " + error);
+        console.error("Status: " + status);
+        console.error("XHR: ", xhr);
+      },
+    });
+  }
+  
+
+
+function displayData(data) {
+  $("#appointmentsList").empty();
+  data.forEach(function(appointment) {
+    $("#appointmentsList").append(
+      "<li>" +
+        appointment.title +
+        "</li>"
+    );
+  });
+}

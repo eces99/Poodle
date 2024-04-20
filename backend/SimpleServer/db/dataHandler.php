@@ -1,10 +1,11 @@
 <?php
-include("./models/appointment.php");
+include ("./models/appointment.php");
+
 class DataHandler
 {
     public function queryAppointments()
     {
-        $res =  $this->getDemoData();
+        $res = $this->getDemoData();
         return $res;
     }
 
@@ -29,7 +30,7 @@ class DataHandler
         }
         return $result;
     }
-    
+
     public function queryAppointmentByTime($time)
     {
         $result = array();
@@ -41,21 +42,64 @@ class DataHandler
         return $result;
     }
 
+
+    // Funktion zum Inkrementieren des Auto-Increment-WFerts
+
     public function addAppointment($appointment)
     {
-        $conn = $this->getDBConnection();
-        $sql = "INSERT INTO appointment (title, place, info, beginTime, duration) VALUES (?, ?, ?, ?, ?)";
-        $stmt = $conn->prepare($sql);
 
-        $stmt->bind_param("ssssi", $appointment['title'], $appointment['place'], $appointment['info'], $appointment['beginTime'], $appointment['duration']);
-        
-        if ($stmt->execute()) {
+        $conn = $this->getDBConnection();
+        $conn->autocommit(FALSE); // Start transaction
+
+
+        try {
+            // Insert into appointment without beginTime
+            $sql = "INSERT INTO appointment (title, place, info, duration) VALUES (?, ?, ?, ?)";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("sssi", $appointment['title'], $appointment['place'], $appointment['info'], $appointment['duration']);
+            $stmt->execute();
+            $appointmentId = $stmt->insert_id; // Get the last inserted ID
+
+
+            // Handle beginTime
+            if (isset($appointment['beginTime']) && is_array($appointment['beginTime'])) {
+                $sql = "INSERT INTO terminslots (beginTime, appointment_id) VALUES (?, ?)";
+                $stmt = $conn->prepare($sql);
+                foreach ($appointment['beginTime'] as $beginTime) {
+                    $stmt->bind_param("si", $beginTime, $appointmentId);
+                    $stmt->execute();
+                }
+            }
+
+            $conn->commit(); // Commit transaction
             echo "New record created successfully";
-        } else {
-            echo "Error: " . $stmt->error;
+        } catch (Exception $e) {
+            $conn->rollback(); // Rollback transaction on error
+            echo "Error: " . $e->getMessage();
+        } finally {
+            $stmt->close();
+            $conn->close();
         }
-        $stmt->close();
+
+        return $appointmentId;
+    }
+
+    // Get Appointment
+    public function getAppointments()
+    {
+        $conn = $this->getDBConnection();
+        $sql = "SELECT * FROM appointment";
+        $result = $conn->query($sql);
+        $appointments = array();
+    
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $appointments[] = $row;
+            }
+            $result->close();
+        }
         $conn->close();
+        return json_encode($appointments); // Stelle sicher, dass du JSON zurückgibst
     }
     
 
