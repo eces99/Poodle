@@ -1,6 +1,3 @@
-console.log("controller.js");
-
-//Starting point for JQuery init
 $(document).ready(function () {
   console.log("ready!");
   var homePage = $("#home-page");
@@ -17,13 +14,14 @@ $(document).ready(function () {
     if (newView === "home") {
       homePage.show();
       createPage.hide();
+      getAppointments();  // Rufe Termine ab, wenn die Home-Ansicht aktiviert wird
     } else if (newView === "create") {
       createPage.show();
       homePage.hide();
     }
   }
 
-  // Initialize with the home view visible
+  // Initialisiere die Home-Ansicht und lade die Termine
   changeView("home");
   handleForm();
   $("#appointmentForm").submit(function (e) {
@@ -36,19 +34,9 @@ let beginTimes = [];
 
 function handleForm() {
   console.log("handleForm1");
-  let beginTimeList = document.getElementById("beginTimesList"); // Fixed the variable name
+  let beginTimeList = document.getElementById("beginTimesList");
   document.getElementById("btn_add").addEventListener("click", function () {
     console.log("handleForm2");
-    let beginTime = document.getElementById("beginTime").value;
-    if (beginTime) {
-      beginTimes.push(beginTime);
-      document.getElementById("beginTime").value = ""; // Clear the input field
-      beginTimeList.innerHTML += "<li>" + beginTime + "</li>"; // Correctly append new list item
-    }
-    console.log(beginTimes);
-  });
-
-  document.getElementById("btn_add").addEventListener("click", function () {
     let beginTime = document.getElementById("beginTime").value;
     if (beginTime) {
       beginTimes.push(beginTime);
@@ -77,7 +65,7 @@ function submitdata(form) {
     param: JSON.stringify(formData),
   };
 
-  // AJAX-Aufruf ausführen
+  // AJAX-Aufruf ausführen zum Hinzufügen eines Termins
   $.ajax({
     type: "POST",
     url: "http://localhost/Poodle/backend/SimpleServer/serviceHandler.php",
@@ -92,5 +80,43 @@ function submitdata(form) {
       console.error("Status: " + status);
       console.error(xhr);
     },
+  });
+}
+
+function getAppointments() {
+    $.ajax({
+      type: "GET",
+      url: "http://localhost/Poodle/backend/SimpleServer/serviceHandler.php",
+      cache: true, // Setze cache auf true
+      data: { method: "getAppointments" },
+      contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+      success: function (response) {
+        console.log("Here I am: ");
+        try {
+          var data = JSON.parse(response);
+          displayData(data);
+        } catch (e) {
+          console.error("Parsing error:", e);
+        }
+      },
+      error: function (xhr, status, error) {
+        console.log("No, here I am: ");
+        console.error("Error: " + error);
+        console.error("Status: " + status);
+        console.error("XHR: ", xhr);
+      },
+    });
+  }
+  
+
+
+function displayData(data) {
+  $("#appointmentsList").empty();
+  data.forEach(function(appointment) {
+    $("#appointmentsList").append(
+      "<li>" +
+        appointment.title +
+        "</li>"
+    );
   });
 }
