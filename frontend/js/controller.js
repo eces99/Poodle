@@ -145,11 +145,25 @@ function displayData(data) {
           if (error) {
             console.error("Error fetching terminslots:", error);
           } else {
-            // Build a string to display terminslots
-            var terminslotsInfo = "Terminslots: ";
+            // Group slots by date
+            var slotsByDate = {};
             terminslots.forEach(function(terminslot) {
-              terminslotsInfo += "<br>- Begin Time: " + terminslot.beginTime;
+              var date = new Date(terminslot.beginTime).toLocaleDateString();
+              if (!slotsByDate[date]) {
+                slotsByDate[date] = [];
+              }
+              slotsByDate[date].push(terminslot);
             });
+
+            // Build a string to display terminslots grouped by date
+            var terminslotsInfo = "Terminslots:<br>";
+            for (var date in slotsByDate) {
+              terminslotsInfo += "- Date: " + date + "<br>";
+              slotsByDate[date].forEach(function(terminslot) {
+                terminslotsInfo += "&emsp;Time: " + terminslot.beginTime.split(" ")[1] + "<br>";
+              });
+            }
+
             // Append appointment and terminslots info to details
             details.html("Info: " + appointment.info + "<br>" + terminslotsInfo);
           }
