@@ -226,14 +226,38 @@ function displaySelectedAppointment(appointment, terminslots) {
   $("#selected-appointment-section").show();
 }
 
-// Add click event handler for the submit vote button
-$(document).on("click", "#submit-vote", function() {
-  var selectedSlots = [];
-  $("input[type='checkbox']:checked").each(function() {
-      selectedSlots.push($(this).val());
-  });
-  var name = $("#name").val();
-  var comment = $("#comment").val();
+function voteSlot() {
+  $.ajax({
+    type: "POST",
+    url: "http://localhost:8080/Poodle/backend/SimpleServer/serviceHandler.php",
+    cache: true, // Setze cache auf true
+    data: { method: "voteSlot" },
+    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+    success: function (response) {
+      console.log("Here I am: ");
+      try {
+        // Add click event handler for the submit vote button
+        $(document).on("click", "#submit-vote", function() {
+          var selectedSlots = [];
+          $("input[type='checkbox']:checked").each(function() {
+              selectedSlots.push($(this).val());
+          });
+          var name = $("#name").val();
+          var comment = $("#comment").val();
 
-  // Perform further processing (e.g., submitting the vote data to the server)
-});
+          // Perform further processing (e.g., submitting the vote data to the server)
+        });
+      } catch (e) {
+        console.error("Parsing error:", e);
+      }
+    },
+    error: function (xhr, status, error) {
+      console.log("No, here I am: ");
+      console.error("Error: " + error);
+      console.error("Status: " + status);
+      console.error("XHR: ", xhr);
+    },
+  });
+}
+
+
