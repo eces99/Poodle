@@ -30,6 +30,9 @@ class SimpleLogic
             case "getAppointments":
                 $res = $this->dh->getAppointments();
                 break;
+            case "getTerminSlots":
+                $res = $this->dh->getTerminSlots($_GET['appointment_id']);
+                break;
             default:
                 $res = null;
                 break;

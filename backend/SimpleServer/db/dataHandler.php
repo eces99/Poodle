@@ -102,6 +102,27 @@ class DataHandler
         return json_encode($appointments); // Stelle sicher, dass du JSON zurückgibst
     }
     
+    // Get Terminslots by appointmentId
+    public function getTerminSlots($appointment_id)
+    {
+        $conn = $this->getDBConnection();
+        $sql = "SELECT t.*, a.title FROM terminslots t JOIN appointment a ON t.appointment_id = a.id WHERE t.appointment_id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $appointment_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $terminslot = array();
+
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $terminslot[] = $row;
+            }
+            $result->close();
+        }
+        $stmt->close();
+        $conn->close();
+        return json_encode($terminslot); // Make sure to return JSON
+    }
 
 
     public function getDBConnection()

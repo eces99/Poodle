@@ -68,7 +68,7 @@ function submitdata(form) {
   // AJAX-Aufruf ausführen zum Hinzufügen eines Termins
   $.ajax({
     type: "POST",
-    url: "http://localhost/Poodle/backend/SimpleServer/serviceHandler.php",
+    url: "http://localhost:8080/Poodle/backend/SimpleServer/serviceHandler.php",
     cache: false,
     data: dataToSend,
     contentType: "application/x-www-form-urlencoded; charset=UTF-8",
@@ -86,7 +86,7 @@ function submitdata(form) {
 function getAppointments() {
     $.ajax({
       type: "GET",
-      url: "http://localhost/Poodle/backend/SimpleServer/serviceHandler.php",
+      url: "http://localhost:8080/Poodle/backend/SimpleServer/serviceHandler.php",
       cache: true, // Setze cache auf true
       data: { method: "getAppointments" },
       contentType: "application/x-www-form-urlencoded; charset=UTF-8",
@@ -107,16 +107,50 @@ function getAppointments() {
       },
     });
   }
-  
 
+function getTerminSlots(appointment_id, callback) {
+  $.ajax({
+    type: "GET",
+    url: "http://localhost:8080/Poodle/backend/SimpleServer/serviceHandler.php",
+    cache: true, // Set cache to true
+    data: { method: "getTerminSlots", appointment_id: appointment_id },
+    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+    success: function (response) {
+      try {
+        var data = JSON.parse(response);
+        callback(null, data);
+        console.log("Terminslots: ", data);
+      } catch (e) {
+        console.error("Parsing error:", e);
+        callback(e);
+      }
+    },
+    error: function (xhr, status, error) {
+      console.error("Error: " + error);
+      console.error("Status: " + status);
+      callback(error);
+    },
+  });
+}
 
 function displayData(data) {
   $("#appointmentsList").empty();
   data.forEach(function(appointment) {
-    $("#appointmentsList").append(
-      "<li>" +
-        appointment.title +
-        "</li>"
-    );
+    var listItem = $("<li>" + appointment.title + "</li>");
+    var details = $("<div class='details' style='display: none;'></div>");
+    listItem.append(details);
+    listItem.click(function() {
+      if (!details.text()) {
+        getTerminSlots(appointment.id, function(error, terminslot) {
+          if (error) {
+            console.error("Error fetching terminslots:", error);
+          } else {
+            details.text("Info: " + appointment.info + ", Begin Time: " + terminslot.beginTime);
+          }
+        });
+      }
+      details.toggle();
+    });
+    $("#appointmentsList").append(listItem);
   });
 }
