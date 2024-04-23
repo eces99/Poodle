@@ -132,7 +132,7 @@ function getTerminSlots(appointment_id, callback) {
     },
   });
 }
-
+/*
 function displayData(data) {
   $("#appointmentsList").empty();
   data.forEach(function(appointment) {
@@ -174,3 +174,66 @@ function displayData(data) {
     $("#appointmentsList").append(listItem);
   });
 }
+*/
+
+// Add click event handler for appointment items
+function displayData(data) {
+  $("#appointmentsList").empty();
+  data.forEach(function(appointment) {
+      var listItem = $("<li>" + appointment.title + "</li>");
+      var details = $("<div class='details' style='display: none;'></div>");
+      listItem.append(details);
+      listItem.click(function() {
+          if (!details.text()) {
+              getTerminSlots(appointment.id, function(error, terminslots) {
+                  if (error) {
+                      console.error("Error fetching terminslots:", error);
+                  } else {
+                      // Display selected appointment details and voting options
+                      displaySelectedAppointment(appointment, terminslots);
+                  }
+              });
+          }
+          details.toggle();
+      });
+      $("#appointmentsList").append(listItem);
+  });
+}
+
+// Function to display selected appointment details and voting options
+function displaySelectedAppointment(appointment, terminslots) {
+  // Construct appointment details HTML
+  var appointmentDetailsHtml = "<p><strong>Title:</strong> " + appointment.title + "</p>";
+  appointmentDetailsHtml += "<p><strong>Place:</strong> " + appointment.place + "</p>";
+  appointmentDetailsHtml += "<p><strong>Additional Information:</strong> " + appointment.info + "</p>";
+
+  // Display appointment details
+  $("#selected-appointment-details").html(appointmentDetailsHtml);
+
+  // Construct voting options HTML
+  var votingOptionsHtml = "<h4>Select Timeslots:</h4>";
+  terminslots.forEach(function(terminslot) {
+      votingOptionsHtml += "<div class='form-check'>";
+      votingOptionsHtml += "<input class='form-check-input' type='checkbox' value='" + terminslot.id + "' id='slot" + terminslot.id + "'>";
+      votingOptionsHtml += "<label class='form-check-label' for='slot" + terminslot.id + "'>" + terminslot.beginTime + "</label>";
+      votingOptionsHtml += "</div>";
+  });
+
+  // Display voting options
+  $("#voting-section").html(votingOptionsHtml);
+
+  // Show the selected appointment section
+  $("#selected-appointment-section").show();
+}
+
+// Add click event handler for the submit vote button
+$(document).on("click", "#submit-vote", function() {
+  var selectedSlots = [];
+  $("input[type='checkbox']:checked").each(function() {
+      selectedSlots.push($(this).val());
+  });
+  var name = $("#name").val();
+  var comment = $("#comment").val();
+
+  // Perform further processing (e.g., submitting the vote data to the server)
+});
