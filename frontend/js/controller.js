@@ -141,11 +141,17 @@ function displayData(data) {
     listItem.append(details);
     listItem.click(function() {
       if (!details.text()) {
-        getTerminSlots(appointment.id, function(error, terminslot) {
+        getTerminSlots(appointment.id, function(error, terminslots) {
           if (error) {
             console.error("Error fetching terminslots:", error);
           } else {
-            details.text("Info: " + appointment.info + ", Begin Time: " + terminslot.beginTime);
+            // Build a string to display terminslots
+            var terminslotsInfo = "Terminslots: ";
+            terminslots.forEach(function(terminslot) {
+              terminslotsInfo += "<br>- Begin Time: " + terminslot.beginTime;
+            });
+            // Append appointment and terminslots info to details
+            details.html("Info: " + appointment.info + "<br>" + terminslotsInfo);
           }
         });
       }
