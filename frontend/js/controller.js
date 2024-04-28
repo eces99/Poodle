@@ -2,33 +2,39 @@ $(document).ready(function () {
   console.log("ready!");
   var homePage = $("#home-page");
   var createPage = $("#create-page");
+  var selectedAppointmentSection = $("#selected-appointment-section"); // Get the selected appointment section
 
   $(".home-link").on("click", function () {
-    changeView("home");
+      changeView("home");
   });
   $(".create-link").on("click", function () {
-    changeView("create");
+      changeView("create");
   });
 
   function changeView(newView) {
-    if (newView === "home") {
-      homePage.show();
-      createPage.hide();
-      getAppointments();  // Rufe Termine ab, wenn die Home-Ansicht aktiviert wird
-    } else if (newView === "create") {
-      createPage.show();
-      homePage.hide();
-    }
+      if (newView === "home") {
+          homePage.show();
+          createPage.hide();
+          selectedAppointmentSection.hide(); // Hide the selected appointment section on the home page
+          getAppointments(); // Fetch appointments for the home page
+      } else if (newView === "create") {
+          createPage.show();
+          homePage.hide();
+          selectedAppointmentSection.hide(); // Hide the selected appointment section on the create page
+      }
   }
 
-  // Initialisiere die Home-Ansicht und lade die Termine
+  // Initial view setup
   changeView("home");
   handleForm();
   $("#appointmentForm").submit(function (e) {
-    e.preventDefault();
-    submitdata(this);
+      e.preventDefault();
+      submitdata(this);
   });
 });
+
+// Your existing code...
+
 
 let beginTimes = [];
 
@@ -268,7 +274,7 @@ function submitVoting() {
       console.error("Error: " + error);
       console.error("Status: " + status);
       console.error(xhr.responseText);
-      alert("Failed to add voting. Please try again later.");
+      //alert("Failed to add voting. Please try again later.");
       // Handle error response if needed
     }
   });
