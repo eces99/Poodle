@@ -34,7 +34,7 @@ class SimpleLogic
                 $res = $this->dh->getTerminSlots($_GET['appointment_id']);
                 break;
             case "addVoting":
-                $res = $this->dh->addVoting($param);
+                $this->dh->addVoting($param);
                 break;
             default:
                 $res = null;
