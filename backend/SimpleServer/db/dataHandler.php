@@ -102,6 +102,34 @@ class DataHandler
         return json_encode($appointments); // Stelle sicher, dass du JSON zurückgibst
     }
     
+    public function addVoting($votings)
+    {
+        $conn = $this->getDBConnection();
+        $conn->autocommit(FALSE); // Start transaction
+    
+        try {
+            // Insert into votings
+            $sql = "INSERT INTO votings (appointment_id, slot_id, username, comment) VALUES (?, ?, ?, ?)";
+            $stmt = $conn->prepare($sql);
+            foreach ($votings['slot_id'] as $slotId) {
+                $stmt->bind_param("iiss", $votings['appointment_id'], $slotId, $votings['username'], $votings['comment']);
+                $stmt->execute();
+            }
+    
+            $conn->commit(); // Commit transaction
+            echo "New record created successfully";
+        } catch (Exception $e) {
+            $conn->rollback(); // Rollback transaction on error
+            echo "Error: " . $e->getMessage();
+        } finally {
+            $stmt->close();
+            $conn->close();
+        }
+     }
+    
+    
+    
+
     // Get Terminslots by appointmentId
     public function getTerminSlots($appointment_id)
     {

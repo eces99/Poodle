@@ -200,8 +200,12 @@ function displayData(data) {
   });
 }
 
+var selectedAppointmentId = null;
+
+
 // Function to display selected appointment details and voting options
 function displaySelectedAppointment(appointment, terminslots) {
+  selectedAppointmentId = appointment.id;
   // Construct appointment details HTML
   var appointmentDetailsHtml = "<p><strong>Title:</strong> " + appointment.title + "</p>";
   appointmentDetailsHtml += "<p><strong>Place:</strong> " + appointment.place + "</p>";
@@ -226,38 +230,46 @@ function displaySelectedAppointment(appointment, terminslots) {
   $("#selected-appointment-section").show();
 }
 
-function voteSlot() {
+// Function to submit voting data
+document.getElementById("submit-vote").addEventListener("click", submitVoting);
+
+function submitVoting() {
+  console.log("submitVoting");
+  // Get the selected checkboxes
+  var selectedSlots = [];
+  $('input[type="checkbox"]:checked').each(function() {
+    selectedSlots.push($(this).val());
+  });
+
+  // Get other form data
+  var username = $("#name").val();
+  var comment = $("#comment").val();
+
+  // Construct the votingData object
+  var votingData = {
+    appointment_id: selectedAppointmentId,
+    slot_id: selectedSlots,
+    username: username,
+    comment: comment
+  };
   $.ajax({
     type: "POST",
     url: "http://localhost:8080/Poodle/backend/SimpleServer/serviceHandler.php",
-    cache: true, // Setze cache auf true
-    data: { method: "voteSlot" },
+    data: {
+      method: "addVoting",
+      param: JSON.stringify(votingData)
+    },
     contentType: "application/x-www-form-urlencoded; charset=UTF-8",
     success: function (response) {
-      console.log("Here I am: ");
-      try {
-        // Add click event handler for the submit vote button
-        $(document).on("click", "#submit-vote", function() {
-          var selectedSlots = [];
-          $("input[type='checkbox']:checked").each(function() {
-              selectedSlots.push($(this).val());
-          });
-          var name = $("#name").val();
-          var comment = $("#comment").val();
-
-          // Perform further processing (e.g., submitting the vote data to the server)
-        });
-      } catch (e) {
-        console.error("Parsing error:", e);
-      }
+      alert("Voting added successfully");
+      // Handle success response if needed
     },
     error: function (xhr, status, error) {
-      console.log("No, here I am: ");
       console.error("Error: " + error);
       console.error("Status: " + status);
-      console.error("XHR: ", xhr);
-    },
+      console.error(xhr.responseText);
+      alert("Failed to add voting. Please try again later.");
+      // Handle error response if needed
+    }
   });
 }
-
-
