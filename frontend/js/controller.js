@@ -34,6 +34,36 @@ $(document).ready(function () {
 });
 
 // Your existing code...
+// Add click event handler for deleting appointment items
+$("#delete-appointment").on("click", function() {
+  if (selectedAppointmentId) {
+      deleteAppointment(selectedAppointmentId);
+  } else {
+      alert("Please select an appointment to delete.");
+  }
+});
+
+function deleteAppointment(appointmentId) {
+  $.ajax({
+      type: "POST",
+      url: "http://localhost/Poodle/backend/SimpleServer/serviceHandler.php",
+      data: {
+          method: "deleteAppointment",
+          param: JSON.stringify({ id: appointmentId })
+      },
+      contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+      success: function (response) {
+          alert("Appointment deleted successfully");
+          // Handle success response if needed
+      },
+      error: function (xhr, status, error) {
+          console.error("Error: " + error);
+          console.error("Status: " + status);
+          console.error(xhr.responseText);
+          // Handle error response if needed
+      }
+  });
+}
 
 
 let beginTimes = [];
@@ -74,7 +104,7 @@ function submitdata(form) {
   // AJAX-Aufruf ausführen zum Hinzufügen eines Termins
   $.ajax({
     type: "POST",
-    url: "http://localhost:8080/Poodle/backend/SimpleServer/serviceHandler.php",
+    url: "http://localhost/Poodle/backend/SimpleServer/serviceHandler.php",
     cache: false,
     data: dataToSend,
     contentType: "application/x-www-form-urlencoded; charset=UTF-8",
@@ -92,7 +122,7 @@ function submitdata(form) {
 function getAppointments() {
     $.ajax({
       type: "GET",
-      url: "http://localhost:8080/Poodle/backend/SimpleServer/serviceHandler.php",
+      url: "http://localhost/Poodle/backend/SimpleServer/serviceHandler.php",
       cache: true, // Setze cache auf true
       data: { method: "getAppointments" },
       contentType: "application/x-www-form-urlencoded; charset=UTF-8",
@@ -117,7 +147,7 @@ function getAppointments() {
 function getTerminSlots(appointment_id, callback) {
   $.ajax({
     type: "GET",
-    url: "http://localhost:8080/Poodle/backend/SimpleServer/serviceHandler.php",
+    url: "http://localhost/Poodle/backend/SimpleServer/serviceHandler.php",
     cache: true, // Set cache to true
     data: { method: "getTerminSlots", appointment_id: appointment_id },
     contentType: "application/x-www-form-urlencoded; charset=UTF-8",
@@ -260,7 +290,7 @@ function submitVoting() {
   };
   $.ajax({
     type: "POST",
-    url: "http://localhost:8080/Poodle/backend/SimpleServer/serviceHandler.php",
+    url: "http://localhost/Poodle/backend/SimpleServer/serviceHandler.php",
     data: {
       method: "addVoting",
       param: JSON.stringify(votingData)

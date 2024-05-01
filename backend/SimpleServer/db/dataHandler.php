@@ -101,6 +101,45 @@ class DataHandler
         $conn->close();
         return json_encode($appointments); // Stelle sicher, dass du JSON zurückgibst
     }
+    public function deleteAppointment($appointment_id)
+{
+    $conn = $this->getDBConnection();
+
+    // Start transaction
+    $conn->begin_transaction();
+
+    try {
+        // Delete from votings
+        $stmt = $conn->prepare("DELETE FROM votings WHERE appointment_id = ?");
+        $stmt->bind_param("i", $appointment_id);
+        $stmt->execute();
+        $stmt->close();
+
+        // Delete from terminslots
+        $stmt = $conn->prepare("DELETE FROM terminslots WHERE appointment_id = ?");
+        $stmt->bind_param("i", $appointment_id);
+        $stmt->execute();
+        $stmt->close();
+
+        // Delete from appointment
+        $stmt = $conn->prepare("DELETE FROM appointment WHERE id = ?");
+        $stmt->bind_param("i", $appointment_id);
+        $stmt->execute();
+        $stmt->close();
+
+        // Commit transaction
+        $conn->commit();
+        echo "Appointment deleted successfully";
+    } catch (Exception $e) {
+        // Rollback transaction on error
+        $conn->rollback();
+        echo "Error: " . $e->getMessage();
+    } finally {
+        // Close connection
+        $conn->close();
+    }
+}
+
     
     public function addVoting($votings)
     {

@@ -87,28 +87,32 @@
     </div>
 
     <!-- Add a new section for displaying selected appointment details and voting options -->
-<div id="selected-appointment-section" style="display: none;">
-    <div class="container mt-5">
-        <h2 class="text-center mb-4">Selected Appointment Details</h2>
-        <div id="selected-appointment-details"></div>
-        <h3 class="mt-4">Vote for Timeslots</h3>
-        <div id="voting-section">
-            <!-- Voting options will be dynamically generated here -->
+    <div id="selected-appointment-section" style="display: none;">
+        <div class="container mt-5">
+            <h2 class="text-center mb-4">Selected Appointment Details</h2>
+            <div id="selected-appointment-details"></div>
+            <h3 class="mt-4">Vote for Timeslots</h3>
+            <div id="voting-section">
+                <!-- Voting options will be dynamically generated here -->
+            </div>
+            <div class="form-group mt-3">
+                <label for="name">Your Name</label>
+                <input type="text" class="form-control" id="name" placeholder="Enter your name">
+            </div>
+            <div class="form-group">
+                <label for="comment">Optional Comment</label>
+                <textarea class="form-control" id="comment" rows="3" placeholder="Enter optional comment"></textarea>
+            </div>
+            <button type="button" id="submit-vote" class="btn btn-primary">Submit Vote</button>
+            
+            <!-- Delete appointment button -->
+            <button type="button" id="delete-appointment" class="btn btn-danger">Delete Appointment</button>
         </div>
-        <div class="form-group mt-3">
-            <label for="name">Your Name</label>
-            <input type="text" class="form-control" id="name" placeholder="Enter your name">
-        </div>
-        <div class="form-group">
-            <label for="comment">Optional Comment</label>
-            <textarea class="form-control" id="comment" rows="3" placeholder="Enter optional comment"></textarea>
-        </div>
-        <button type="button" id="submit-vote" class="btn btn-primary">Submit Vote</button>
     </div>
-</div>
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
 </body>
 
 </html>

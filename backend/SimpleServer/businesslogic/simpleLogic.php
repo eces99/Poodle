@@ -1,5 +1,5 @@
 <?php
-include("db/dataHandler.php");
+include ("db/dataHandler.php");
 
 class SimpleLogic
 {
@@ -13,7 +13,7 @@ class SimpleLogic
     {
         switch ($method) {
             case "addAppointment":
-                $res= $this->dh->addAppointment($param);
+                $res = $this->dh->addAppointment($param);
                 break;
             case "queryAppointments":
                 $res = $this->dh->queryAppointments();
@@ -35,6 +35,9 @@ class SimpleLogic
                 break;
             case "addVoting":
                 $this->dh->addVoting($param);
+                break;
+            case "deleteAppointment":
+                $res = $this->dh->deleteAppointment($param['id']);
                 break;
             default:
                 $res = null;
