@@ -33,8 +33,7 @@ $(document).ready(function () {
   });
 });
 
-// Your existing code...
-// Add click event handler for deleting appointment items
+// click event handler for deleting appointment items
 $("#delete-appointment").on("click", function() {
   if (selectedAppointmentId) {
       deleteAppointment(selectedAppointmentId);
@@ -168,49 +167,6 @@ function getTerminSlots(appointment_id, callback) {
     },
   });
 }
-/*
-function displayData(data) {
-  $("#appointmentsList").empty();
-  data.forEach(function(appointment) {
-    var listItem = $("<li>" + appointment.title + "</li>");
-    var details = $("<div class='details' style='display: none;'></div>");
-    listItem.append(details);
-    listItem.click(function() {
-      if (!details.text()) {
-        getTerminSlots(appointment.id, function(error, terminslots) {
-          if (error) {
-            console.error("Error fetching terminslots:", error);
-          } else {
-            // Group slots by date
-            var slotsByDate = {};
-            terminslots.forEach(function(terminslot) {
-              var date = new Date(terminslot.beginTime).toLocaleDateString();
-              if (!slotsByDate[date]) {
-                slotsByDate[date] = [];
-              }
-              slotsByDate[date].push(terminslot);
-            });
-
-            // Build a string to display terminslots grouped by date
-            var terminslotsInfo = "Terminslots:<br>";
-            for (var date in slotsByDate) {
-              terminslotsInfo += "- Date: " + date + "<br>";
-              slotsByDate[date].forEach(function(terminslot) {
-                terminslotsInfo += "&emsp;Time: " + terminslot.beginTime.split(" ")[1] + "<br>";
-              });
-            }
-
-            // Append appointment and terminslots info to details
-            details.html("Info: " + appointment.info + "<br>" + terminslotsInfo);
-          }
-        });
-      }
-      details.toggle();
-    });
-    $("#appointmentsList").append(listItem);
-  });
-}
-*/
 
 // Add click event handler for appointment items
 function displayData(data) {
@@ -304,8 +260,6 @@ function submitVoting() {
       console.error("Error: " + error);
       console.error("Status: " + status);
       console.error(xhr.responseText);
-      //alert("Failed to add voting. Please try again later.");
-      // Handle error response if needed
     }
   });
 }
