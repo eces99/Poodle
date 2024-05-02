@@ -211,7 +211,7 @@ function displaySelectedAppointment(appointment, terminslots) {
   terminslots.forEach(function(terminslot) {
       votingOptionsHtml += "<div class='form-check'>";
       votingOptionsHtml += "<input class='form-check-input' type='checkbox' value='" + terminslot.id + "' id='slot" + terminslot.id + "'>";
-      votingOptionsHtml += "<label class='form-check-label' for='slot" + terminslot.id + "'>" + terminslot.beginTime + "</label>";
+      votingOptionsHtml += "<label class='form-check-label' for='slot" + terminslot.id + "'>" + terminslot.beginTime + " Duration: " + appointment.duration + " mins" + "</label>";
       votingOptionsHtml += "</div>";
   });
 
@@ -262,4 +262,44 @@ function submitVoting() {
       console.error(xhr.responseText);
     }
   });
+}
+
+// Function to get voting data for a selected appointment
+function getVotingData(appointment_id) {
+  $.ajax({
+    type: "GET",
+    url: "http://localhost/Poodle/backend/SimpleServer/serviceHandler.php",
+    cache: true, // Set cache to true
+    data: { method: "getVotingData", appointment_id: appointment_id },
+    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+    success: function (response) {
+      try {
+        var data = JSON.parse(response);
+        callback(null, data);
+        console.log("working or not: ", data);
+      } catch (e) {
+        console.error("Parsing error:", e);
+        callback(e);
+      }
+    },
+    error: function (xhr, status, error) {
+      console.error("Error: " + error);
+      console.error("Status: " + status);
+      callback(error);
+    },
+  });
+}
+
+// Function to display voting results
+function displayVotingResults(data) {
+  var resultsContainer = $("#voting-results");
+  // Clear previous results
+  resultsContainer.empty();
+  // Append new results
+  data.forEach(function (votings) {
+    var resultHtml = "<div>" + votings.username + ": " + votings.comment + "</div>";
+    resultsContainer.append(resultHtml);
+  });
+  // Show the results section
+  $("#voting-results-section").show();
 }

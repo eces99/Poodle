@@ -191,6 +191,28 @@ class DataHandler
         return json_encode($terminslot); // Make sure to return JSON
     }
 
+    // Get Votings by appointmentId
+    public function getVotingData($appointment_id)
+    {
+        $conn = $this->getDBConnection();
+        $sql = "SELECT * FROM votings WHERE appointment_id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $appointment_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $votings = array();
+
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $votings[] = $row;
+            }
+            $result->close();
+        }
+        $stmt->close();
+        $conn->close();
+        return json_encode($votings); // Make sure to return JSON
+    }
+
 
     public function getDBConnection()
     {

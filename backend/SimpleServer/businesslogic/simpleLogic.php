@@ -52,6 +52,10 @@ class SimpleLogic
             case "deleteAppointment":
                 $this->dh->deleteAppointment($param['id']);
                 break;
+            // Ruft alle Bewertungen ab
+            case "getVotingData":
+                $res = $this->dh->getVotingData($_GET['appointment_id']);
+                break;
             // Standardfall: keine Aktion
             default:
                 $res = null;
