@@ -195,7 +195,7 @@ class DataHandler
     public function getVotingData($appointment_id)
     {
         $conn = $this->getDBConnection();
-        $sql = "SELECT * FROM votings WHERE appointment_id = ?";
+        $sql = "SELECT v.*, t.beginTime FROM votings v JOIN terminslots t ON v.slot_id = t.id WHERE v.appointment_id = ?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("i", $appointment_id);
         $stmt->execute();

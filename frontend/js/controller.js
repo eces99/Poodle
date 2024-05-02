@@ -45,7 +45,7 @@ $("#delete-appointment").on("click", function() {
 function deleteAppointment(appointmentId) {
   $.ajax({
       type: "POST",
-      url: "http://localhost/Poodle/backend/SimpleServer/serviceHandler.php",
+      url: "http://localhost:8080/Poodle/backend/SimpleServer/serviceHandler.php",
       data: {
           method: "deleteAppointment",
           param: JSON.stringify({ id: appointmentId })
@@ -103,7 +103,7 @@ function submitdata(form) {
   // AJAX-Aufruf ausführen zum Hinzufügen eines Termins
   $.ajax({
     type: "POST",
-    url: "http://localhost/Poodle/backend/SimpleServer/serviceHandler.php",
+    url: "http://localhost:8080/Poodle/backend/SimpleServer/serviceHandler.php",
     cache: false,
     data: dataToSend,
     contentType: "application/x-www-form-urlencoded; charset=UTF-8",
@@ -121,7 +121,7 @@ function submitdata(form) {
 function getAppointments() {
     $.ajax({
       type: "GET",
-      url: "http://localhost/Poodle/backend/SimpleServer/serviceHandler.php",
+      url: "http://localhost:8080/Poodle/backend/SimpleServer/serviceHandler.php",
       cache: true, // Setze cache auf true
       data: { method: "getAppointments" },
       contentType: "application/x-www-form-urlencoded; charset=UTF-8",
@@ -146,7 +146,7 @@ function getAppointments() {
 function getTerminSlots(appointment_id, callback) {
   $.ajax({
     type: "GET",
-    url: "http://localhost/Poodle/backend/SimpleServer/serviceHandler.php",
+    url: "http://localhost:8080/Poodle/backend/SimpleServer/serviceHandler.php",
     cache: true, // Set cache to true
     data: { method: "getTerminSlots", appointment_id: appointment_id },
     contentType: "application/x-www-form-urlencoded; charset=UTF-8",
@@ -220,6 +220,9 @@ function displaySelectedAppointment(appointment, terminslots) {
 
   // Show the selected appointment section
   $("#selected-appointment-section").show();
+
+  // Display the voting results for the selected appointment
+  displayVotingResults(selectedAppointmentId);
 }
 
 // Function to submit voting data
@@ -246,7 +249,7 @@ function submitVoting() {
   };
   $.ajax({
     type: "POST",
-    url: "http://localhost/Poodle/backend/SimpleServer/serviceHandler.php",
+    url: "http://localhost:8080/Poodle/backend/SimpleServer/serviceHandler.php",
     data: {
       method: "addVoting",
       param: JSON.stringify(votingData)
@@ -264,42 +267,41 @@ function submitVoting() {
   });
 }
 
-// Function to get voting data for a selected appointment
-function getVotingData(appointment_id) {
+function displayVotingResults(appointment_id) {
   $.ajax({
     type: "GET",
-    url: "http://localhost/Poodle/backend/SimpleServer/serviceHandler.php",
-    cache: true, // Set cache to true
+    url: "http://localhost:8080/Poodle/backend/SimpleServer/serviceHandler.php",
+    cache: true,
     data: { method: "getVotingData", appointment_id: appointment_id },
     contentType: "application/x-www-form-urlencoded; charset=UTF-8",
     success: function (response) {
       try {
         var data = JSON.parse(response);
-        callback(null, data);
-        console.log("working or not: ", data);
+        // Call a function to display the results
+        displayResults(data);
       } catch (e) {
         console.error("Parsing error:", e);
-        callback(e);
       }
     },
     error: function (xhr, status, error) {
       console.error("Error: " + error);
       console.error("Status: " + status);
-      callback(error);
+      console.error(xhr.responseText);
     },
   });
 }
 
-// Function to display voting results
-function displayVotingResults(data) {
+
+function displayResults(data) {
   var resultsContainer = $("#voting-results");
-  // Clear previous results
-  resultsContainer.empty();
-  // Append new results
-  data.forEach(function (votings) {
-    var resultHtml = "<div>" + votings.username + ": " + votings.comment + "</div>";
+  resultsContainer.empty(); // Clear previous results
+
+  // Iterate over the voting data and append it to the results container
+  data.forEach(function (voting, terminslot) {
+    var resultHtml = "<div>" + voting.username + " voted for " + voting.beginTime + " comment: " + voting.comment + "</div>";  
     resultsContainer.append(resultHtml);
   });
+
   // Show the results section
   $("#voting-results-section").show();
 }
