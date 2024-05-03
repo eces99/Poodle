@@ -3,6 +3,7 @@ $(document).ready(function () {
   var homePage = $("#home-page");
   var createPage = $("#create-page");
   var selectedAppointmentSection = $("#selected-appointment-section"); // Get the selected appointment section
+  var displayVotingResults = $("#voting-results-section"); // Get the voting results section
 
   $(".home-link").on("click", function () {
       changeView("home");
@@ -16,11 +17,13 @@ $(document).ready(function () {
           homePage.show();
           createPage.hide();
           selectedAppointmentSection.hide(); // Hide the selected appointment section on the home page
+          displayVotingResults.hide(); // Hide the voting results section on the home page
           getAppointments(); // Fetch appointments for the home page
       } else if (newView === "create") {
           createPage.show();
           homePage.hide();
           selectedAppointmentSection.hide(); // Hide the selected appointment section on the create page
+          displayVotingResults.hide(); // Hide the voting results section on the create page
       }
   }
 
@@ -45,7 +48,7 @@ $("#delete-appointment").on("click", function() {
 function deleteAppointment(appointmentId) {
   $.ajax({
       type: "POST",
-      url: "http://localhost:8080/Poodle/backend/SimpleServer/serviceHandler.php",
+      url: "http://localhost/Poodle/backend/SimpleServer/serviceHandler.php",
       data: {
           method: "deleteAppointment",
           param: JSON.stringify({ id: appointmentId })
@@ -103,7 +106,7 @@ function submitdata(form) {
   // AJAX-Aufruf ausführen zum Hinzufügen eines Termins
   $.ajax({
     type: "POST",
-    url: "http://localhost:8080/Poodle/backend/SimpleServer/serviceHandler.php",
+    url: "http://localhost/Poodle/backend/SimpleServer/serviceHandler.php",
     cache: false,
     data: dataToSend,
     contentType: "application/x-www-form-urlencoded; charset=UTF-8",
@@ -121,7 +124,7 @@ function submitdata(form) {
 function getAppointments() {
     $.ajax({
       type: "GET",
-      url: "http://localhost:8080/Poodle/backend/SimpleServer/serviceHandler.php",
+      url: "http://localhost/Poodle/backend/SimpleServer/serviceHandler.php",
       cache: true, // Setze cache auf true
       data: { method: "getAppointments" },
       contentType: "application/x-www-form-urlencoded; charset=UTF-8",
@@ -146,7 +149,7 @@ function getAppointments() {
 function getTerminSlots(appointment_id, callback) {
   $.ajax({
     type: "GET",
-    url: "http://localhost:8080/Poodle/backend/SimpleServer/serviceHandler.php",
+    url: "http://localhost/Poodle/backend/SimpleServer/serviceHandler.php",
     cache: true, // Set cache to true
     data: { method: "getTerminSlots", appointment_id: appointment_id },
     contentType: "application/x-www-form-urlencoded; charset=UTF-8",
@@ -221,8 +224,12 @@ function displaySelectedAppointment(appointment, terminslots) {
   // Show the selected appointment section
   $("#selected-appointment-section").show();
 
+
+
   // Display the voting results for the selected appointment
   displayVotingResults(selectedAppointmentId);
+
+
 }
 
 // Function to submit voting data
@@ -249,7 +256,7 @@ function submitVoting() {
   };
   $.ajax({
     type: "POST",
-    url: "http://localhost:8080/Poodle/backend/SimpleServer/serviceHandler.php",
+    url: "http://localhost/Poodle/backend/SimpleServer/serviceHandler.php",
     data: {
       method: "addVoting",
       param: JSON.stringify(votingData)
@@ -270,7 +277,7 @@ function submitVoting() {
 function displayVotingResults(appointment_id) {
   $.ajax({
     type: "GET",
-    url: "http://localhost:8080/Poodle/backend/SimpleServer/serviceHandler.php",
+    url: "http://localhost/Poodle/backend/SimpleServer/serviceHandler.php",
     cache: true,
     data: { method: "getVotingData", appointment_id: appointment_id },
     contentType: "application/x-www-form-urlencoded; charset=UTF-8",
